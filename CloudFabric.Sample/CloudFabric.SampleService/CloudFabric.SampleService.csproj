@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CloudFabric.Library.Common" Version="2018.9.21.1" />
+    <PackageReference Include="CloudFabric.Library.Common" Version="2018.11.30.3" />
     <PackageReference Include="CloudFabric.Logging" Version="2018.8.2.2" />
     <PackageReference Include="CloudFabric.Platform" Version="2018.8.2.2" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="8.0.101" />

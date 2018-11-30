@@ -13,6 +13,7 @@ using Swashbuckle.AspNetCore.Swagger;
 using CloudFabric.SampleService.Helpers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authorization;
+using CloudFabric.Library.Common.Filters;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -55,10 +56,10 @@ namespace CloudFabric.SampleService
                         options.ApiName = "SampleAPI";
                     });
 
-            services.AddMvc(config => // By default, all controllers are protected
+            services.AddMvc(config =>
                     {
-                        var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
-                        config.Filters.Add(new AuthorizeFilter(policy));
+                        config.Filters.Add<GlobalExceptionFilter>();
+                        config.Filters.Add(new AuthorizeFilter(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build())); // By default, all controllers are protected
                     })
                     .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                     .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
