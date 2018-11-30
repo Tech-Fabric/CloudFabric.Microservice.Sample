@@ -1,9 +1,15 @@
-﻿using System.IO;
+﻿using Serilog;
+using System.IO;
 using System.Fabric;
+using System.Net.Http;
+using CloudFabric.Logging;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Hosting;
+using CloudFabric.SampleService.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.Services.Runtime;
+using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.ApplicationInsights.ServiceFabric;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
 
@@ -14,9 +20,13 @@ namespace CloudFabric.SampleService
     /// </summary>
     internal sealed class SampleService : StatelessService
     {
+        ConfigSettings _settings;
         public SampleService(StatelessServiceContext context)
             : base(context)
-        { }
+        {
+            _settings = new ConfigSettings(context);
+            Log.Logger = new ConfigLogging().CreateLogger(_settings.Environment, _settings.ApplicationName, _settings.LogglyToken);
+        }
 
         /// <summary>
         /// Optional override to create listeners (like tcp, http) for this service instance.
@@ -35,9 +45,15 @@ namespace CloudFabric.SampleService
                                     .UseKestrel()
                                     .ConfigureServices(
                                         services => services
-                                            .AddSingleton<StatelessServiceContext>(serviceContext))
+                                            .AddSingleton<StatelessServiceContext>(serviceContext)
+                                            .AddSingleton<FabricClient>(new FabricClient())
+                                            .AddSingleton<HttpClient>(new HttpClient())
+                                            .AddSingleton<ITelemetryInitializer>((serviceProvider) => new FabricTelemetryInitializer()))
                                     .UseContentRoot(Directory.GetCurrentDirectory())
+                                    .UseEnvironment(_settings.Environment)
                                     .UseStartup<Startup>()
+                                    .UseSerilog()
+                                    .UseApplicationInsights(_settings.InstrumentationKey)
                                     .UseServiceFabricIntegration(listener, ServiceFabricIntegrationOptions.None)
                                     .UseUrls(url)
                                     .Build();
