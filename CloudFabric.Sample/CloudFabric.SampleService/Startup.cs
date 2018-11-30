@@ -8,9 +8,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.ApplicationInsights;
+using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
 using CloudFabric.SampleService.Helpers;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CloudFabric.SampleService
@@ -28,6 +31,13 @@ namespace CloudFabric.SampleService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<MvcOptions>(options =>
+            {
+                options.Filters.Add(new RequireHttpsAttribute());
+            });
+
+            services.AddApplicationInsightsTelemetry(_configuration);
+
             services.AddCors(options =>
             {
                 options.AddPolicy("default", policy => {
@@ -37,7 +47,20 @@ namespace CloudFabric.SampleService
                 });
             });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+            services.AddAuthentication("Bearer")
+                    .AddIdentityServerAuthentication(options =>
+                    {
+                        options.Authority = _configuration.GetSection("IdentitySettings")["ApiURL"];
+                        options.RequireHttpsMetadata = true;
+                        options.ApiName = "SampleAPI";
+                    });
+
+            services.AddMvc(config => // By default, all controllers are protected
+                    {
+                        var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+                        config.Filters.Add(new AuthorizeFilter(policy));
+                    })
+                    .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                     .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
                     .AddJsonOptions(options =>
                     {
@@ -46,6 +69,7 @@ namespace CloudFabric.SampleService
                        
             services.AddOptions();
             services.AddHttpClient();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info
@@ -79,7 +103,9 @@ namespace CloudFabric.SampleService
             var appInsightsLogLevel = _configuration.GetValue<LogLevel>("Logging:Application Insights:LogLevel:Default");
             loggerFactory.AddApplicationInsights(app.ApplicationServices, appInsightsLogLevel);
 
+            app.UseAuthentication();
             app.UseMiddleware<RequestLoggingMiddlewareExtended>();
+
             app.UseCors("default");
             app.UseMvc();
 
@@ -96,8 +122,13 @@ namespace CloudFabric.SampleService
 
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("../swagger/v1/swagger.json", "Product search API V1");
+                c.SwaggerEndpoint("../swagger/v1/swagger.json", "Cloud Fabric Sample API V1");
             });
+
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            };
         }
     }
 }
