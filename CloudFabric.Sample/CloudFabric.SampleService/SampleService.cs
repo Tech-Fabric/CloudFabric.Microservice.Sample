@@ -8,8 +8,6 @@ using Microsoft.AspNetCore.Hosting;
 using CloudFabric.SampleService.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.Services.Runtime;
-using Microsoft.ApplicationInsights.Extensibility;
-using Microsoft.ApplicationInsights.ServiceFabric;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
 
@@ -47,9 +45,7 @@ namespace CloudFabric.SampleService
                                         services => services
                                             .AddSingleton<StatelessServiceContext>(serviceContext)
                                             .AddSingleton<ConfigSettings>(new ConfigSettings(serviceContext))
-                                            .AddSingleton<FabricClient>(new FabricClient())
-                                            .AddSingleton<HttpClient>(new HttpClient())
-                                            .AddSingleton<ITelemetryInitializer>((serviceProvider) => new FabricTelemetryInitializer()))
+                                            .AddSingleton<HttpClient>(new HttpClient()))
                                     .UseContentRoot(Directory.GetCurrentDirectory())
                                     .UseEnvironment(_settings.Environment)
                                     .UseStartup<Startup>()

@@ -26,27 +26,6 @@ namespace CloudFabric.SampleService.Controllers
             return Ok(returnObject);
         }
 
-        [HttpGet]
-        [Route("~/error")]
-        public ActionResult<IEnumerable<string>> GetError()
-        {
-            throw new InvalidOperationException();
-        }
-
-        [HttpGet]
-        [Route("~/error2")]
-        public ActionResult<IEnumerable<string>> GetError2()
-        {
-            try
-            {
-                throw new InvalidOperationException();
-            }
-            catch(Exception ex)
-            {
-                return BadRequest();
-            }
-        }
-
         [HttpGet("{id}")]
         [ProducesResponseType(200, Type = typeof(ProductDTO))]
         [ProducesResponseType(404)]
@@ -137,6 +116,29 @@ namespace CloudFabric.SampleService.Controllers
             {
                 _logger.LogError(ex.Message + " " + ex.StackTrace);
                 return BadRequest("Message");
+            }
+        }
+
+        // These two controllers are created to demonstate handled and unhandled exceptions and the messages then generate!
+
+        [HttpGet]
+        [Route("error")]
+        public ActionResult<IEnumerable<string>> GetError()
+        {
+            throw new InvalidOperationException();
+        }
+
+        [HttpGet]
+        [Route("error2")]
+        public ActionResult<IEnumerable<string>> GetError2()
+        {
+            try
+            {
+                throw new InvalidOperationException();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
             }
         }
     }
