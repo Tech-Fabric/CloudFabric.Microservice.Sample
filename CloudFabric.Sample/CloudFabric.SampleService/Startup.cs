@@ -14,6 +14,7 @@ using CloudFabric.SampleService.Helpers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using CloudFabric.Library.Common.Filters;
+using CloudFabric.Library.Common.Middlewares;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -100,6 +101,7 @@ namespace CloudFabric.SampleService
             loggerFactory.AddApplicationInsights(app.ApplicationServices, appInsightsLogLevel);
 
             app.UseAuthentication();
+            app.UseCorrelationIdHeader();
             app.UseMiddleware<RequestLoggingMiddlewareExtended>();
 
             app.UseCors("default");
