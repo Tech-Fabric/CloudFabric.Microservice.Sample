@@ -100,9 +100,10 @@ namespace CloudFabric.SampleService
             var appInsightsLogLevel = _configuration.GetValue<LogLevel>("Logging:Application Insights:LogLevel:Default");
             loggerFactory.AddApplicationInsights(app.ApplicationServices, appInsightsLogLevel);
 
-            app.UseAuthentication();
             app.UseCorrelationIdHeader();
             app.UseMiddleware<RequestLoggingMiddlewareExtended>();
+
+            app.UseAuthentication();
 
             app.UseCors("default");
             app.UseMvc();
