@@ -46,6 +46,7 @@ namespace CloudFabric.SampleService
                                     .ConfigureServices(
                                         services => services
                                             .AddSingleton<StatelessServiceContext>(serviceContext)
+                                            .AddSingleton<ConfigSettings>(new ConfigSettings(serviceContext))
                                             .AddSingleton<FabricClient>(new FabricClient())
                                             .AddSingleton<HttpClient>(new HttpClient())
                                             .AddSingleton<ITelemetryInitializer>((serviceProvider) => new FabricTelemetryInitializer()))

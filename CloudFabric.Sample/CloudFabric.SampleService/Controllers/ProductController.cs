@@ -4,11 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using CloudFabric.SampleService.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CloudFabric.SampleService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous] //Don't do it for services in production
     public class ProductController : ControllerBase
     {
         public ILogger<ProductController> _logger { get; set; }
@@ -22,6 +24,27 @@ namespace CloudFabric.SampleService.Controllers
         {
             var returnObject = new string[] { "value1", "value2" };
             return Ok(returnObject);
+        }
+
+        [HttpGet]
+        [Route("~/error")]
+        public ActionResult<IEnumerable<string>> GetError()
+        {
+            throw new InvalidOperationException();
+        }
+
+        [HttpGet]
+        [Route("~/error2")]
+        public ActionResult<IEnumerable<string>> GetError2()
+        {
+            try
+            {
+                throw new InvalidOperationException();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpGet("{id}")]
