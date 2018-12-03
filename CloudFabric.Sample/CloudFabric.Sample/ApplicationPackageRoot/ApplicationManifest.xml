@@ -1,18 +1,33 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="CloudFabric.SampleType" ApplicationTypeVersion="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
-    <Parameter Name="CloudFabric.SampleService_ASPNETCORE_ENVIRONMENT" DefaultValue="" />
+    <Parameter Name="CloudFabric.SampleService_Environment" DefaultValue="Development" />
     <Parameter Name="CloudFabric.SampleService_InstanceCount" DefaultValue="-1" />
+    <Parameter Name="CloudFabric.SampleService_LogglyToken" DefaultValue="-1" />
+    <Parameter Name="CloudFabric.SampleService_IdentityServerHost" DefaultValue="-1" />
+    <Parameter Name="CloudFabric.SampleService_ApplicationName" DefaultValue="-1" />
+    <Parameter Name="CloudFabric.SampleService_InstrumentationKey" DefaultValue="-1" />
+    <Parameter Name="CloudFabric.SampleService_DatabaseConnectionString" DefaultValue="-1" />
   </Parameters>
   <!-- Import the ServiceManifest from the ServicePackage. The ServiceManifestName and ServiceManifestVersion 
        should match the Name and Version attributes of the ServiceManifest element defined in the 
        ServiceManifest.xml file. -->
   <ServiceManifestImport>
     <ServiceManifestRef ServiceManifestName="CloudFabric.SampleServicePkg" ServiceManifestVersion="1.0.0" />
-    <ConfigOverrides />
-    <EnvironmentOverrides CodePackageRef="code">
-      <EnvironmentVariable Name="ASPNETCORE_ENVIRONMENT" Value="[CloudFabric.SampleService_ASPNETCORE_ENVIRONMENT]" />
-    </EnvironmentOverrides>
+    <ConfigOverrides>
+      <ConfigOverride Name="Config">
+        <Settings>
+          <Section Name="Environment">
+            <Parameter Name="Environment" Value="[CloudFabric.SampleService_Environment]" />
+            <Parameter Name="InstrumentationKey" Value="[CloudFabric.SampleService_InstrumentationKey]" />
+            <Parameter Name="ApplicationName" Value="[CloudFabric.SampleService_ApplicationName]" />
+            <Parameter Name="LogglyToken" Value="[CloudFabric.SampleService_LogglyToken]" />
+            <Parameter Name="IdentityServerHost" Value="[CloudFabric.SampleService_IdentityServerHost]" />
+            <Parameter Name="DatabaseConnectionString" Value="[CloudFabric.SampleService_DatabaseConnectionString]" />
+          </Section>
+        </Settings>
+      </ConfigOverride>
+    </ConfigOverrides>
   </ServiceManifestImport>
   <DefaultServices>
     <!-- The section below creates instances of service types, when an instance of this 

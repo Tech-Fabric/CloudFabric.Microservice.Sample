@@ -6,9 +6,10 @@
 
     public class ConfigSettings : ConfigUtil
     {
+        public string LogglyToken { get; set; }
+        public string IdentityServerHost { get; set; }
         public string Environment { get; private set; }
         public string ApplicationName { get; private set; }
-        public string LogglyToken { get; set; }
         public string InstrumentationKey { get; private set; }
         public string DatabaseConnectionString { get; private set; }
 
@@ -21,7 +22,8 @@
         {
             LogglyToken = GetValue(settings, "Environment", "LogglyToken");
             ApplicationName = GetValue(settings, "Environment", "ApplicationName");
-            Environment = GetValue(settings, "Environment", "ASPNETCORE_ENVIRONMENT");
+            Environment = GetValue(settings, "Environment", "Environment");
+            IdentityServerHost = GetValue(settings, "Environment", "IdentityServerHost");
             InstrumentationKey = GetValue(settings, "Environment", "InstrumentationKey");
             DatabaseConnectionString = GetValue(settings, "Database", "DatabaseConnectionString");
         }

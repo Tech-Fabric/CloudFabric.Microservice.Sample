@@ -1,6 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Application xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="fabric:/CloudFabric.Sample" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
-    <Parameter Name="CloudFabric.SampleService_InstanceCount" Value="-1" />
+    <Parameter Name="CloudFabric.SampleService_Environment" Value="Production" />
+    <Parameter Name="CloudFabric.SampleService_InstanceCount" Value="xxxx" />
+    <Parameter Name="CloudFabric.SampleService_LogglyToken" Value="xxxx" />
+    <Parameter Name="CloudFabric.SampleService_DatabaseConnectionString" Value="xxxx" />
+    <Parameter Name="CloudFabric.SampleService_IdentityServerHost" Value="https://identity.sampleservice.com" />
+    <Parameter Name="CloudFabric.SampleService_ApplicationName" Value="xxxx" />
+    <Parameter Name="CloudFabric.SampleService_InstrumentationKey" Value="xxxx" />
   </Parameters>
 </Application>

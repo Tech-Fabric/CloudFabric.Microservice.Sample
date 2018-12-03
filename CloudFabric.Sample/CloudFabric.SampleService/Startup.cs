@@ -32,11 +32,6 @@ namespace CloudFabric.SampleService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<MvcOptions>(options =>
-            {
-                options.Filters.Add(new RequireHttpsAttribute());
-            });
-
             services.AddApplicationInsightsTelemetry(_configuration);
 
             services.AddCors(options =>
@@ -51,7 +46,7 @@ namespace CloudFabric.SampleService
             services.AddAuthentication("Bearer")
                     .AddIdentityServerAuthentication(options =>
                     {
-                        options.Authority = _configuration.GetSection("IdentitySettings")["ApiURL"];
+                        options.Authority = _settings.IdentityServerHost;
                         options.RequireHttpsMetadata = true;
                         options.ApiName = "SampleAPI";
                     });
